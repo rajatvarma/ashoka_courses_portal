@@ -23,20 +23,27 @@
 
 </script>
 
+<svelte:head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+</svelte:head>
+
 
 <div class="window">
     <div class="wrapper">
         <div style="padding: 5%;">
-            <h3 id="heading">Search for courses by course code/title</h3>
-            <p style="font-size: 0.85em; text-align:justify">Please note that because of things I dont wanna deal with, the DSes do not show their correct timings (OAA bad). You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and the display of the time-table may not be very precise. </p>
+            <p style="font-size: 0.85em; text-align:justify;font-weight:500;color:#ccc">Please note that because of things I dont wanna deal with, the DSes do not show their correct timings. You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and the display of the time-table may not be very precise. </p>
             <br>
-            <p style="font-size: 0.85em; text-align:justify">PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
-            <input type="text" bind:value={searchString} id="search-bar" />
+            <p style="font-size: 0.85em; text-align:justify;font-weight:500;color:#ccc">PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
+            <h2 id="heading">Search for courses by course code/title</h2>
+            <input type="text" bind:value={searchString} id="search-bar" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             Filter Out DSes?
             <input type="checkbox" bind:checked={filterOutDS} id="">
             <br>
-            Show only selected courses?
+            Show only selected courses? 
             <input type="checkbox" bind:checked={showSelected} id="">
+            ({$scheduleList.length} course{$scheduleList.length != 1 ? 's' : ''} selected)
         </div>
         <div class="container">
         {#if showSelected}
@@ -67,14 +74,32 @@
         </div>
     </div>
     <CalendarView />
-</div>
-
+</div>  
 
 <style>
 
+    :global(body) {
+        background-color: #1b1b1b;
+        margin: 0;
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #ccc;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #1b1b1b;
+    }
+
     .window {
         display: flex;
+        font-family: 'Inconsolata';
         margin: 0;
+        margin: 2.5vh;
     }
 
     .wrapper {
@@ -96,9 +121,5 @@
         padding: 1%;
         margin-top: 5%;
         margin-bottom: 5%;
-    }
-
-    #heading {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
 </style>    

@@ -36,47 +36,42 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
     <span class="course-title">
         {course.title}
     </span>
-    <span class="course-faculty">
-    Faculty: {#each course.faculty as faculty}
-        <span class="faculty">{faculty}</span>&nbsp;
+    <div class="course-faculty">
+    Faculty: 
+    <br>
+    {#each course.faculty as faculty}
+        <span class="faculty">{faculty}</span><br>
     {/each}
-    </span>
+    </div>
     <span class="course-timings">
         <!-- <h3>Timings</h3> -->
-        <ClockSolid size="20" color="#1b1b1b" />
+        <ClockSolid size="16" color="#1b1b1b" />
         <div class="timings-text">
             {#each course.timings as timing}
-                <p>{days[timing.day]}: {timing.start} - {timing.end}</p>
+                <p>{days[timing.day]}: {timing.start.toString().slice(0, 2) + ":" + timing.start.toString().slice(2)} - {timing.end.toString().slice(0, 2) + ":" + timing.end.toString().slice(2)}</p>
             {/each}
         </div>
     </span>
     <span class="course-timings">
-        <LocationDotSolid size="20" color="#1b1b1b" />
+        <LocationDotSolid size="16" color="#1b1b1b" />
         <div class="timings-text">
             {course.locations.toString()}
         </div>
     </span>
     <div style="display: flex; align-items: center">
-        <p>Add to schedule</p>
+        <p style="margin-right: 2%; font-weight:500">Add to schedule:</p>
         <input type="checkbox" bind:checked={isChecked} on:click={() => {updateSchedule(course)}} id="checkbox">
     </div>
 </div>
 
 
 <style>
-
-    #checkbox {
-        border-radius: 100px;
-        background-color: aqua;
-    }
-
     .course-card {
         display: flex;
         width: 40vw;
         flex-direction: column;
         background-color: #C3C3C3;
         color: #1b1b1b;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         border: #00000000 solid 1px;
         box-shadow: #1b1b1b 0px 5px 10px;
         padding: 2%;
@@ -90,12 +85,17 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         margin: 5% 0;
     }
 
+    .course-faculty {
+        align-items: center;
+        display: flex;
+        width: 30vw;
+        flex-wrap: wrap;
+    }
+
     .course-timings {
-        /* border: 1px solid violet; */
         padding: 0 5%;
         display: flex;
         align-items: center;
-        margin-top: 5%;
     }
 
     .timings-text {
@@ -117,7 +117,11 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
     .faculty {
         font-weight: 600;
         text-transform: capitalize;
-        /* border: 0.25px #555 solid; */
-        padding: 2px 5px;
+        /* border: 0.25px #555 solid;
+        border-radius: 10px; */
+        padding: 5px;
+        width: '35vw';
+        justify-content: space-evenly;
+        margin: 0px 5px 0px 5px;
     }
 </style>
