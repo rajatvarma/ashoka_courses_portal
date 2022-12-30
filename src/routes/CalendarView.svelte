@@ -1,7 +1,14 @@
 <script lang="ts">
     import { days, scheduleList } from "./things";
     import type { CourseObject } from "./things";
-    $: console.log($scheduleList)
+
+    function getTime(x:number) {
+        const newTime = x - 800
+        const hours = Math.floor(newTime/100)
+        const normalizedMinutes = Number(((newTime % 100) / 60).toFixed(2))
+        console.log(Number(hours+normalizedMinutes)*42+50+(hours*0.25))
+        return (Number(hours+normalizedMinutes)*6+7.5+(hours*0.15))
+}
 </script>
 
 <div id="table">
@@ -21,9 +28,9 @@
         {#each $scheduleList as course}
             {#if course.timings.some(item => (days[item.day] == day))}
                 <div class="table-course"
-                    style="top: {(Number(course.timings.find(item => days[item.day] == day)?.start) - 750)/100*5.5 + 7.5}vh; height: {((Number(course.timings.find(item => days[item.day] == day)?.end) - Number(course.timings.find(item => days[item.day] == day)?.start))/100*5)-2}vh">
+                    style="top: {getTime(course.timings.find(item => days[item.day] == day).start)}vh; height: 9vh">
                     <!-- <p style="margin: 0;">{'A'.repeat(20)}</p> -->
-                    <p style="margin: 0;">{course.code[0]}</p>
+                    <p style="margin: 5px;">{course.code[0]}</p>
                 </div>
             {/if}
         {/each}
@@ -36,7 +43,6 @@
 
 <style>
     #table {
-        padding: 2vh 0;
         max-height: 100%;
         width: 60vw;
         display: flex;
@@ -44,7 +50,7 @@
     }
 
     .cell {
-        height: 5.5vh;
+        height: 6vh;
         width: 7.5vw;
         border-top: 0.25px solid black;
         border-right: 0.25px solid black;
@@ -52,7 +58,6 @@
 
     .table-course {
         position: absolute;
-        padding: 10px;
         background-color: #0d3862;
         color: wheat;
         font-family: monospace;

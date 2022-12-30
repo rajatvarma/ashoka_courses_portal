@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
+import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
     import { scheduleList, days } from "./things";
     import type { CourseObject } from "./things";
 
@@ -11,11 +11,23 @@
         if ($scheduleList.some((item:CourseObject) => (course.code == item.code))) {
             $scheduleList = $scheduleList.filter((item:CourseObject) => (item.code !== course.code))
         } else {
+            $scheduleList.forEach(item => {
+                course.timings.forEach(thisCourseTiming => {
+                    if(item.timings.some(e => (e.day == thisCourseTiming.day))) {
+                        const clashDay = item.timings.find(e => (e.day == thisCourseTiming.day))
+                        if (clashDay) {
+                            if (thisCourseTiming.start >= clashDay.start && thisCourseTiming.start <= clashDay.end) {
+                                alert(`Clash between ${course.title} & ${item.title} on ${days[clashDay.day]} at ${clashDay?.start}`)
+                                return;
+                            } 
+                        }
+                    }
+                })
+            });
             $scheduleList = [...$scheduleList, course]
         }
     }
 </script>
-
 
 <div class="course-card">
     <span class="course-code">
@@ -25,7 +37,9 @@
         {course.title}
     </span>
     <span class="course-faculty">
-    {course.faculty.toString()}
+    Faculty: {#each course.faculty as faculty}
+        <span class="faculty">{faculty}</span>&nbsp;
+    {/each}
     </span>
     <span class="course-timings">
         <!-- <h3>Timings</h3> -->
@@ -47,6 +61,7 @@
         <input type="checkbox" bind:checked={isChecked} on:click={() => {updateSchedule(course)}} id="checkbox">
     </div>
 </div>
+
 
 <style>
 
@@ -79,9 +94,7 @@
         /* border: 1px solid violet; */
         padding: 0 5%;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        text-align: right;
         margin-top: 5%;
     }
 
@@ -89,6 +102,7 @@
         font-weight: 600;
         background-color: #C3C3C3;
         padding: 2%;
+        margin-left: 5%;
     }
 
     .course-code {
@@ -100,9 +114,10 @@
         align-self: flex-start;
     }
 
-    /* .undefined {
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 0.6em;
-        color: grey;
-    } */
+    .faculty {
+        font-weight: 600;
+        text-transform: capitalize;
+        /* border: 0.25px #555 solid; */
+        padding: 2px 5px;
+    }
 </style>
