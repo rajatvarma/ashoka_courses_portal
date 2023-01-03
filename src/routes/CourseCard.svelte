@@ -86,7 +86,8 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
 
     .course-card {
         display: flex;
-        width: 40vw;
+        max-width: 35vw;
+        min-width: 35vw;
         flex-direction: column;
         background-color: #C3C3C3;
         color: #1b1b1b;

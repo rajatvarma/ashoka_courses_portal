@@ -103,10 +103,12 @@
     }
 
     .wrapper {
-        width: 40vw;
+        max-width: 40vw;
+        overflow-x: hidden;
         background-color: #c4122f;
         height: 95vh;
         overflow-y: scroll;
+
     }
 
     .container {
@@ -114,6 +116,7 @@
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     #search-bar {
