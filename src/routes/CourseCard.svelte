@@ -65,13 +65,25 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         <input type="checkbox" bind:checked={isChecked} on:click={() => {updateSchedule(course)}} id="checkbox">
     </div>
     <button class="button" on:click={() => {isDescriptionShown = !isDescriptionShown}}>{isDescriptionShown ? 'Hide' : 'Show'} Description</button>
-    <div style="display: {isDescriptionShown ? 'block' : 'none'};">
+    <div style="display: {isDescriptionShown ? 'block' : 'none'}; height: 40vh; overflow-y: scroll">
     {@html course.description}
     </div>
 </div>
 
 
 <style>
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #ccc;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #1b1b1b;
+    }
+
     .course-card {
         display: flex;
         width: 40vw;
@@ -98,6 +110,7 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         font-weight: 500;
         font-size: medium;
         padding: 2% 5%;
+        margin-bottom: 2%;
     }
 
     .course-faculty {
