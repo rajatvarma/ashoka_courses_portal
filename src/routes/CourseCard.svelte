@@ -7,6 +7,8 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
 
     let isChecked = $scheduleList.some((item:CourseObject) => (course.code == item.code));
 
+    let isDescriptionShown = false;
+
     function updateSchedule(course:CourseObject) {
         if ($scheduleList.some((item:CourseObject) => (course.code == item.code))) {
             $scheduleList = $scheduleList.filter((item:CourseObject) => (item.code !== course.code))
@@ -62,6 +64,10 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         <p style="margin-right: 2%; font-weight:500">Add to schedule:</p>
         <input type="checkbox" bind:checked={isChecked} on:click={() => {updateSchedule(course)}} id="checkbox">
     </div>
+    <button class="button" on:click={() => {isDescriptionShown = !isDescriptionShown}}>{isDescriptionShown ? 'Hide' : 'Show'} Description</button>
+    <div style="display: {isDescriptionShown ? 'block' : 'none'};">
+    {@html course.description}
+    </div>
 </div>
 
 
@@ -83,6 +89,15 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         font-weight: 700;
         font-size: 1.25em;
         margin: 5% 0;
+    }
+
+    .button {
+        border: none;
+        background-color: #00b3a1;
+        font-family: "Inconsolata";
+        font-weight: 500;
+        font-size: medium;
+        padding: 2% 5%;
     }
 
     .course-faculty {

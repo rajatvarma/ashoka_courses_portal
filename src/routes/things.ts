@@ -13,6 +13,7 @@ export interface CourseObject {
     }[];
     faculty: string[];
     title: string;
+    description?: string;
 }
 
 const list: CourseObject[] = []

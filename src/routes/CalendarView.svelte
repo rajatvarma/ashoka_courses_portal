@@ -7,7 +7,7 @@
         const hours = Math.floor(newTime/100)
         const normalizedMinutes = Number(((newTime % 100) / 60).toFixed(2))
         console.log(Number(hours+normalizedMinutes)*42+50+(hours*0.25))
-        return (Number(hours+normalizedMinutes)*6+7.5+(hours*0.15))
+        return (Number(hours+normalizedMinutes)*6+8.5+(hours*0.17))
 }
 </script>
 
@@ -28,7 +28,7 @@
         {#each $scheduleList as course}
             {#if course.timings.some(item => (days[item.day] == day))}
                 <div class="table-course"
-                    style="top: {getTime(course.timings.find(item => days[item.day] == day).start)}vh; height: 9vh">
+                    style="top: {getTime(course.timings.find(item => days[item.day] == day).start)}vh; height: 9.5vh">
                     <!-- <p style="margin: 0;">{'A'.repeat(20)}</p> -->
                     <p style="margin: 5px;">{course.code[0]}</p>
                 </div>
@@ -66,7 +66,6 @@
         font-family: monospace;
         width: 7vw;
         margin: 0;
-        border-radius: 5px;
         word-wrap: break-word;
     }
 
