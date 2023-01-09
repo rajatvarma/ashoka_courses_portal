@@ -105,6 +105,7 @@
     :global(body) {
         background-color: #1b1b1b;
         margin: 0;
+        overflow-x: hidden;
     }
 
     ::-webkit-scrollbar {
@@ -123,14 +124,13 @@
         display: flex;
         font-family: 'Inconsolata';
         margin: 0;
-        margin: 2.5vh;
     }
 
     .wrapper {
         max-width: 40vw;
         overflow-x: hidden;
         background-color: #c4122f;
-        height: 95vh;
+        height: 100vh;
         overflow-y: scroll;
 
     }
@@ -160,26 +160,22 @@
 
     @media (max-width: 400px) {
         .wrapper {
-            max-width: 95vw;
+            max-width: 100vw;
         }
 
         .calendar {
-            width: 95vw;
+            min-width: 100vw;
         }
 
         .fab {
             display: block;
             position: absolute;
-            bottom: 4vh;
-            right: 4vh;
+            bottom: 1vh;
+            right: 2vw;
             background-color: #1b1b1b;
             border: none;
             padding: 15px;
             border-radius: 100%;
-        }
-
-        .calendar {
-            display: none
         }
     }
 </style>    

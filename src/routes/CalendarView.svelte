@@ -6,15 +6,15 @@
         const newTime = x - 800
         const hours = Math.floor(newTime/100)
         const normalizedMinutes = Number(((newTime % 100) / 60).toFixed(2))
-        return (Number(hours+normalizedMinutes)*6+9+(hours*0.25))
-}
+        return (Number(hours+normalizedMinutes)*6+6.2+(hours*0.25))
+    }
 </script>
 
 <div id="table">
     <div class="table-day">
         <div class="cell" style="border: none; width: 3vw"></div> 
         {#each Array.from(Array(14)) as _, i}
-        <div class="cell" style="border-top: 0.25vh solid #00000000; width: 3vw; justify-content: flex-start">
+        <div class="cell time-cell">
             <p class="time-text">{i+8 < 10 ? "0" : ""}{i+8}:00</p>
         </div>
         {/each}
@@ -27,7 +27,7 @@
         {#each $scheduleList as course}
             {#if course.timings.some(item => (days[item.day] == day))}
                 <div class="table-course"
-                    style="top: {getTime(course.timings.find(item => days[item.day] == day).start)}vh; height: 9vh">
+                    style="top: {getTime(course.timings.find(item => days[item.day] == day).start)}vh; height: 9.5vh">
                     <!-- <p style="margin: 0;">{'A'.repeat(20)}</p> -->
                     <p style="margin: 5px;">{course.code[0]}</p>
                 </div>
@@ -35,7 +35,7 @@
         {/each}
         {#each Array.from(Array(14)) as _, i}
             <div class="cell">
-                {#each Array.from(Array(6)) as line}
+                {#each Array.from(Array(5)) as line}
                     <div class="line"></div>
                 {/each}
             </div> 
@@ -47,10 +47,11 @@
 <style>
     #table {
         max-height: 100%;
+        width: 100%;
         display: flex;
         background-color: #CCC;
         flex-direction: row;
-        padding-left: 20px;
+        padding: 0vh 2vw;
         box-shadow: 0px 5px 20px #1119;
     }
 
@@ -62,6 +63,12 @@
         justify-content: space-evenly;
         display: flex;
         flex-direction: column;
+    }
+
+    .time-cell {
+        border-top: 0.25vh solid #00000000;
+        width: 3vw;
+        justify-content: flex-start
     }
 
     .table-course {
@@ -87,7 +94,7 @@
     }
 
     .day-text {
-        font-size: 0.8em;
+        font-size: 0.8rem;
         font-weight: 600;
         text-align: center;
         /* margin: 10px; */
@@ -100,11 +107,6 @@
     }
 
     @media (max-width: 400px) {
-
-        #table {
-            padding: 5px;
-        }
-
         .time-text {
             font-size: 0.5em;
         }
@@ -120,6 +122,10 @@
         .table-course {
             width: 13vw;
             font-size: smaller;
+        }
+
+        .time-cell {
+            width: 7vw;
         }
     }
 </style>
