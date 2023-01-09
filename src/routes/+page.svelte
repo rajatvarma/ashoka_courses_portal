@@ -1,7 +1,7 @@
 <script lang="ts">
     import unfliteredCourses from '../courses.json'
     import CourseCard from './CourseCard.svelte'
-
+    import { CalendarDaySolid, ListSolid } from "svelte-awesome-icons";
     import type { CourseObject } from './things';
     import CalendarView from './CalendarView.svelte';
     let filterOutDS = true;
@@ -19,7 +19,12 @@
         return 0;
     }
 
+    let innerHeight = 0
+    let innerWidth = 0
+
     let courses = unfliteredCourses.sort(compare)
+
+    let isCalendarShown = true
 
 </script>
 
@@ -27,8 +32,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Pre-Registration Helper</title>
 </svelte:head>
+<svelte:window bind:innerHeight={innerHeight} bind:innerWidth={innerWidth} />
 
+<!-- 
+    mobile - YES, cal - YES: YES
+    mobile - YES, cal - NO: NO
+    mobile - NO, cal - YES: YES
+    mobile - NO, cal - NO: YES
+ -->
 
 <div class="window">
     <div class="wrapper">
@@ -73,7 +86,18 @@
         {/if}
         </div>
     </div>
-    <CalendarView />
+    <div class="calendar" style="display: {isCalendarShown ? 'flex' : 'none'};">
+        <CalendarView/>
+    </div>
+
+    <button class="fab" on:click={() => isCalendarShown = !isCalendarShown}>
+        {#if isCalendarShown}
+            <ListSolid size='16' color='white' />
+        {:else}
+            <CalendarDaySolid size='16' color='white' />
+        {/if} 
+    </button>
+
 </div>  
 
 <style>
@@ -111,6 +135,10 @@
 
     }
 
+    .calendar {
+        width: 60vw;
+    }
+
     .container {
         background-color: #0d3862;
         display: flex;
@@ -124,5 +152,34 @@
         padding: 1%;
         margin-top: 5%;
         margin-bottom: 5%;
+    }
+
+    .fab {
+        display: none;
+    }
+
+    @media (max-width: 400px) {
+        .wrapper {
+            max-width: 95vw;
+        }
+
+        .calendar {
+            width: 95vw;
+        }
+
+        .fab {
+            display: block;
+            position: absolute;
+            bottom: 4vh;
+            right: 4vh;
+            background-color: #1b1b1b;
+            border: none;
+            padding: 15px;
+            border-radius: 100%;
+        }
+
+        .calendar {
+            display: none
+        }
     }
 </style>    

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
+    import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
     import { scheduleList, days } from "./things";
     import type { CourseObject } from "./things";
 
@@ -32,9 +32,13 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
 </script>
 
 <div class="course-card">
-    <span class="course-code">
-        {course.code}
-    </span>
+    <div class="course-faculty">
+        {#each course.code as code}
+            <span class="course-code">
+                {code}
+            </span>
+        {/each}
+    </div>
     <span class="course-title">
         {course.title}
     </span>
@@ -50,7 +54,7 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         <ClockSolid size="16" color="#1b1b1b" />
         <div class="timings-text">
             {#each course.timings as timing}
-                <p>{days[timing.day]}: {timing.start.toString().slice(0, 2) + ":" + timing.start.toString().slice(2)} - {timing.end.toString().slice(0, 2) + ":" + timing.end.toString().slice(2)}</p>
+                <p>{days[timing.day]}: {timing.start.toString().slice(0, -2) + ":" + timing.start.toString().slice(-2)} - {timing.end.toString().slice(0, 2) + ":" + timing.end.toString().slice(2)}</p>
             {/each}
         </div>
     </span>
@@ -141,6 +145,7 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         padding: 5px;
         font-weight: 900;
         align-self: flex-start;
+        margin-right: 2%;
     }
 
     .faculty {
@@ -152,5 +157,11 @@ import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
         width: '35vw';
         justify-content: space-evenly;
         margin: 0px 5px 0px 5px;
+    }
+
+    @media (max-width: 400px) {
+        .course-card {
+            min-width: 80vw;
+        }
     }
 </style>
