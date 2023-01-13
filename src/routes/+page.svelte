@@ -1,13 +1,19 @@
 <script lang="ts">
     import unfliteredCourses from '../courses.json'
     import CourseCard from './CourseCard.svelte'
-    import { CalendarDaySolid, ListSolid } from "svelte-awesome-icons";
+    import { AngleDownSolid, AngleUpSolid, CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
     import type { CourseObject } from './things';
+    import html2canvas from 'html2canvas';
     import CalendarView from './CalendarView.svelte';
     let filterOutDS = true;
     let showSelected = false;
     import { scheduleList } from './things';
     let searchString = '';
+    let isSsDownloading = false;
+    let innerHeight = 0
+    let innerWidth = 0
+    let isCalendarShown = true
+    let isAlertsShown = true
 
     function compare(a:CourseObject, b:CourseObject) {
         if ( a.code[0] < b.code[0] ){
@@ -18,37 +24,62 @@
         }
         return 0;
     }
-
-    let innerHeight = 0
-    let innerWidth = 0
-
+    
     let courses = unfliteredCourses.sort(compare)
+    function download(uri: any, filename: string){
+            var link = document.createElement('a');
 
-    let isCalendarShown = true
+            if (typeof link.download === 'string') {
+                link.href = uri;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
+            } else {
+                window.open(uri);
+
+            }
+        }
+
+    function saveAsImage(){
+        isSsDownloading = true
+        const calendar = document.getElementById('table')
+        if (calendar) {
+            html2canvas(calendar).then(canvas => {
+                console.log(calendar)
+                download(canvas.toDataURL(), 'timetable.png')
+                isSsDownloading = false
+            });
+        }
+    }
 </script>
 
 <svelte:head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
     <title>Pre-Registration Helper</title>
 </svelte:head>
 <svelte:window bind:innerHeight={innerHeight} bind:innerWidth={innerWidth} />
 
-<!-- 
-    mobile - YES, cal - YES: YES
-    mobile - YES, cal - NO: NO
-    mobile - NO, cal - YES: YES
-    mobile - NO, cal - NO: YES
- -->
-
 <div class="window">
     <div class="wrapper">
         <div style="padding: 5%;">
-            <p style="font-size: 0.85em; text-align:justify;font-weight:500;color:#ccc">Please note that because of things I dont wanna deal with, the DSes do not show their correct timings. You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and the display of the time-table may not be very precise. </p>
-            <br>
-            <p style="font-size: 0.85em; text-align:justify;font-weight:500;color:#ccc">PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
+            <div style="display: flex;justify-content:space-between">
+                <button class="alert-button" on:click={() => {isAlertsShown = !isAlertsShown}}>
+                    <TriangleExclamationSolid size='16' color="#000"/>
+                    <div style="width: 10px;"></div>
+                    {#if isAlertsShown}
+                        <AngleUpSolid size='16' />
+                    {:else}
+                        <AngleDownSolid size='16' />
+                    {/if}
+                </button>
+            </div>
+            <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>Please note that DSes do not show their correct timings. You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and some courses may be missing, which is being worked on.</p>
+            <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
             <h2 id="heading">Search for courses by course code/title</h2>
             <input type="text" bind:value={searchString} id="search-bar" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             Filter Out DSes?
@@ -86,7 +117,16 @@
         {/if}
         </div>
     </div>
-    <div class="calendar" style="display: {isCalendarShown ? 'flex' : 'none'};">
+    <div id="calendar" style="display:{isCalendarShown ? 'flex' : 'none'};">
+        <button id="download-button" style="border:none;" on:click={() => saveAsImage()}>
+            {#if !isSsDownloading}
+                <DownloadSolid size='16' />     
+                {:else}
+                <ClockRegular size='16' />
+            {/if}
+            <div style="width: 10px;"></div>
+            {!isSsDownloading ? 'Download timetable snapshot' : 'Downloading...'}
+        </button>
         <CalendarView/>
     </div>
 
@@ -106,6 +146,7 @@
         background-color: #1b1b1b;
         margin: 0;
         overflow-x: hidden;
+        overflow-y: hidden;
     }
 
     ::-webkit-scrollbar {
@@ -126,6 +167,23 @@
         margin: 0;
     }
 
+    .alert-text {
+        font-size: 0.85em;
+        text-align:justify;
+        font-weight:500;
+        color:#ccc
+    }
+
+    .alert-button {
+        background-color: #f4af03;
+        border: none;
+        padding: 5px 20px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
     .wrapper {
         max-width: 40vw;
         overflow-x: hidden;
@@ -135,8 +193,14 @@
 
     }
 
-    .calendar {
+    #calendar {
+        flex-direction: column;
         width: 60vw;
+        height: 100vh;
+        background-color: #1b1b1b;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
     }
 
     .container {
@@ -158,12 +222,22 @@
         display: none;
     }
 
-    @media (max-width: 400px) {
+    #download-button {
+        background-color: #ccc;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        font-family: 'Inconsolata';
+        font-weight: 900;
+    }
+
+    @media (max-width: 450px) {
         .wrapper {
             max-width: 100vw;
         }
 
-        .calendar {
+        #calendar {
             min-width: 100vw;
         }
 

@@ -19,7 +19,7 @@
                         const clashDay = item.timings.find(e => (e.day == thisCourseTiming.day))
                         if (clashDay) {
                             if (thisCourseTiming.start >= clashDay.start && thisCourseTiming.start <= clashDay.end) {
-                                alert(`Clash between ${course.title} & ${item.title} on ${days[clashDay.day]} at ${clashDay?.start}`)
+                                alert(`Clash between [${course.title}] and [${item.title}] on ${days[clashDay.day]} at ${clashDay?.start.toString().slice(0, -2) + ':' + clashDay?.start.toString().slice(-2)}`)
                                 return;
                             } 
                         }
@@ -159,7 +159,7 @@
         margin: 0px 5px 0px 5px;
     }
 
-    @media (max-width: 400px) {
+    @media (max-width: 450px) {
         .course-card {
             min-width: 80vw;
         }
