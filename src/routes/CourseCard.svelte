@@ -93,7 +93,7 @@
         max-width: 35vw;
         min-width: 35vw;
         flex-direction: column;
-        background-color: #C3C3C3;
+        background-color: #FFF;
         color: #1b1b1b;
         border: #00000000 solid 1px;
         box-shadow: #1b1b1b 0px 5px 10px;
