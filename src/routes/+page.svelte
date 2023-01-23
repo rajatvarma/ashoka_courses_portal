@@ -2,18 +2,20 @@
     import unfliteredCourses from '../courses.json'
     import CourseCard from './CourseCard.svelte'
     import { AngleDownSolid, AngleUpSolid, CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
-    import type { CourseObject } from './things';
     import html2canvas from 'html2canvas';
     import CalendarView from './CalendarView.svelte';
+    import { scheduleList, type CourseObject } from './things';
+    
     let filterOutDS = true;
     let showSelected = false;
-    import { scheduleList } from './things';
     let searchString = '';
     let isSsDownloading = false;
     let innerHeight = 0
     let innerWidth = 0
     let isCalendarShown = true
     let isAlertsShown = true
+    let isModalShown = false
+    let cookieValue = ''
 
     function compare(a:CourseObject, b:CourseObject) {
         if ( a.code[0] < b.code[0] ){
@@ -60,10 +62,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
     <title>Pre-Registration Helper</title>
 </svelte:head>
 <svelte:window bind:innerHeight={innerHeight} bind:innerWidth={innerWidth} />
 
+
+<div class="modal">
+    <div class="modal-box">
+        Experimental: This is a cool little feature that fetches your time-table from AMS and puts it in here so that you can download it as a neat little image.
+        This feature serves no purpose other than to display technical prowess hehehehehe. You will have to follow some tricky steps, but it should not be very difficult.
+        <ol>
+            <li>Open a new tab in your browser.</li>
+            <li>Press Ctrl+Shift+I</li>
+            <li>Now open AMS in the same tab, and make sure you're logged in.</li>
+            <li>Now, in the developer tools thing that shows up on the side, go to the "Network" tab, and set the filter to "Fetch/XHR"</li>
+            <li>Click on any entry called "GetListData", and scroll down to Request Headers</li>
+            <li>Right click on "Cookie", and click on copy value</li>
+            <li>Paste in that value below, and click on submit</li>
+        </ol>
+        Enter the cookie value: <input type="text" name="cookie" id="amsCookieInput" bind:value={cookieValue}>
+        <button>Submit</button>
+    </div>
+</div>
 <div class="window">
     <div class="wrapper">
         <div style="padding: 5%;">
@@ -77,6 +98,15 @@
                         <AngleDownSolid size='16' />
                     {/if}
                 </button>
+                <!-- <button on:click={() => {
+                        const amsWindow = window.open('https://www.google.com', 'amsWindow');
+                        if (amsWindow) {
+                            console.log('window opened')
+                            setTimeout(() => {console.log(amsWindow.document.getElementsByTagName('button'))}, 500)
+                            console.log('window loaded')
+                        }
+                    }
+                }>Fetch timetable from AMS</button> -->
             </div>
             <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>Please note that DSes do not show their correct timings. You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and some courses may be missing, which is being worked on.</p>
             <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
@@ -159,6 +189,7 @@
 
     ::-webkit-scrollbar-thumb {
         background-color: #1b1b1b;
+        box-shadow: #ccc 10px 10px 20px;
     }
 
     .window {
@@ -168,10 +199,28 @@
     }
 
     .alert-text {
-        font-size: 0.85em;
+        font-size: 0.85em; 
         text-align:justify;
         font-weight:500;
         color:#ccc
+    }
+
+    .modal {
+        position: absolute;
+        height: 100vh;
+        width: 100vw;
+        background-color: #1b1b1b55;
+        display: flex;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
+
+    .modal-box {
+        background-color: #ccc;
+        width: 50vw;
+        padding: 5vh 10vw;
     }
 
     .alert-button {

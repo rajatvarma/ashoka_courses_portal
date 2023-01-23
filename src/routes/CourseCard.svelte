@@ -93,7 +93,7 @@
         max-width: 35vw;
         min-width: 35vw;
         flex-direction: column;
-        background-color: #C3C3C3;
+        background-color: #FFF;
         color: #1b1b1b;
         border: #00000000 solid 1px;
         box-shadow: #1b1b1b 0px 5px 10px;
@@ -103,9 +103,10 @@
     }
 
     .course-title {
-        font-weight: 700;
-        font-size: 1.25em;
+        font-size: 1em;
         margin: 5% 0;
+        font-family: 'Comfortaa';
+        font-weight: 700;
     }
 
     .button {
@@ -133,7 +134,6 @@
 
     .timings-text {
         font-weight: 600;
-        background-color: #C3C3C3;
         padding: 2%;
         margin-left: 5%;
     }
