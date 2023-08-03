@@ -1,15 +1,23 @@
 <script lang="ts">
-    import { days, scheduleList, type CourseObject } from "./things";
+    import { days, scheduleList, type CourseObject, currentScheduleIndex } from "./things";
 
-    function getTime(course: CourseObject, day: string) {
-        const timeString = course.timings.find(item => days[item.day] == day)
+    function getTime(course: CourseObject, day: string, timing: string) {
+        const timeString = timing
+        const start = timeString.split('–')[0]
+        // console.log(start, timeString)
+        const end = timeString.split('–')[1]
         if (timeString) {
-            const newTime = timeString.start - 800
-            const hours = Math.floor(newTime/100)
-            const normalizedMinutes = Number(((newTime % 100) / 60).toFixed(2))
-            return (Number(hours+normalizedMinutes)*6+13.75)
+            const baseAmount = 16.85
+            const hoursOffset = (parseInt(start.split(':')[0]) - 8) * 6
+            const minutesOffset = parseInt(start.split(':')[1]) / 10
+            console.log(hoursOffset + minutesOffset)
+            return `${baseAmount + hoursOffset + minutesOffset - (0.05 * (hoursOffset + minutesOffset))}vh`
+        } else {
+            return '0vh'
         }
     }
+
+    // let showTooltip = false
 </script>
 
 <div id="table">
@@ -26,14 +34,21 @@
         <div class="cell" style="border: none;">
             <p class="day-text">{day}</p>
         </div>
-        {#each $scheduleList as course}
-            {#if course.timings.some(item => (days[item.day] == day))}
-                <div class="table-course" style="top: {getTime(course, day)}vh">
-                    <p style="margin: 5px;">{course.code[0]}</p>
-                    <p style="margin: 5px;">{course.title}</p>
-                </div>
-            {/if}
-        {/each}
+        {#each $scheduleList[$currentScheduleIndex] as course}
+            {#each course.WeekDays.split(', ') as courseDay}
+                {#if day == courseDay}
+                    {#each course.TimeSlot.split(', ') as timing}
+                    <div class="table-course" style="top: {getTime(course, day, timing)};">
+                         <p>{course.LSCode}</p>
+                         <p>{course.SpaceName}</p>
+                    </div>
+                    {/each}
+                   <!-- {#if $showTooltip}
+                        <p>{course.LSCode}</p>
+                   {/if} -->
+                    {/if}
+            {/each}
+            {/each}
         {#each Array.from(Array(14)) as _, i}
             <div class="cell">
                 <div class="line" style="background-color: black;"></div>
@@ -45,18 +60,19 @@
         {/each}
     </div>
     {/each}
-    <div class="meal-timing" style="top: 13.5vh;height: 15.5vh;">Breakfast</div>
-    <div class="meal-timing" style="top: 39.15vh;height: 13.5vh;">Lunch</div>
-    <div class="meal-timing" style="top: 66vh;height: 9vh;">Snacks</div>
-    <div class="meal-timing" style="top: 82.75vh;height: 15vh;">Dinner</div>
+    <div class="meal-timing" style="top: 17vh;height: 14.25vh;">Breakfast</div>
+    <div class="meal-timing" style="top: 41.25vh;height: 12.75vh;">Lunch</div>
+    <div class="meal-timing" style="top: 66.65vh;height: 8.5vh;">Snacks</div>
+    <div class="meal-timing" style="top: 82.25vh;height: 14.5vh;">Dinner</div>
 </div>
 
 <style>
     #table {
         display: flex;
         flex-direction: row;
+        height: 85vh;
         padding: 1vh 1vw;
-        background-color: #ccc;
+        background-color: #FFF;
         color: #111;
         /* box-shadow: 0px 5px 20px #1119; */
     }
@@ -65,6 +81,7 @@
         height: 6vh;
         width: 8.5vw;
         border-right: 0.1vw solid #999;
+        font-family: 'Azeret Mono', monospace;
         justify-content: space-between;
         display: flex;
         flex-direction: column;
@@ -78,7 +95,7 @@
         position: absolute;
         display: flex;
         margin-left: 4vw;
-        width: 51.5%;
+        width: 51.3%;
         font-size: small;
     }
 
@@ -87,8 +104,9 @@
         justify-content: flex-start
     }
 
-    .table-course p:last-child {
-        font-size:0.5rem;
+    .table-course p {
+        text-align: center;
+        font-size: 0.7rem;
     }
 
     .table-course {
@@ -99,7 +117,7 @@
         width: 8vw;
         margin: 0;
         word-wrap: break-word;
-        height: 9.25vh;
+        height: 8.5vh;
         z-index: 1;
     }
 
@@ -124,7 +142,7 @@
     
     .line {
         width: '100%';
-        height: 0.1vh;
+        height: 0.05vh;
         background-color: #0005;
     }
     

@@ -3,19 +3,26 @@ import { writable } from "svelte/store";
 export const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export interface CourseObject {
-    fullName?: string;
-    code: string[];
-    locations: string[];
-    timings: {
-        day: number;
-        start: number;
-        end: number;
-    }[];
-    faculty: string[];
-    title: string;
-    description?: string;
+    "AutoId": number,
+    "LSCode": string,
+    "DSCode": string,
+    "description": string,
+    "UniqueId": string,
+    "Rotation": string | null,
+    "WeekDays": string,
+    "TimeSlot": string,
+    "ActualTimeSlot": string,
+    "SpaceSysGenId": string,
+    "SpaceName": string,
+    "Status": string,
+    "CourseTitle": string,
+    "Faculty": string,
+    "isTimeTableimported": boolean,
+    "SpaceCapacity": number,
+    "AvailableResource": string
 }
 
-const list: CourseObject[] = []
+const list: CourseObject[][] = [[], [], [], [], []]
 
+export const currentScheduleIndex = writable(1);
 export const scheduleList = writable(list);

@@ -4,7 +4,8 @@
     import { AngleDownSolid, AngleUpSolid, CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
     import html2canvas from 'html2canvas';
     import CalendarView from './CalendarView.svelte';
-    import { scheduleList, type CourseObject } from './things';
+    import { scheduleList, type CourseObject, currentScheduleIndex } from './things';
+	import { each } from 'svelte/internal';
     
     let filterOutDS = true;
     let showSelected = false;
@@ -17,17 +18,9 @@
     let isModalShown = false
     let cookieValue = ''
 
-    function compare(a:CourseObject, b:CourseObject) {
-        if ( a.code[0] < b.code[0] ){
-            return -1;
-        }
-        if ( a.code[0] > b.code[0] ){
-            return 1;
-        }
-        return 0;
-    }
+    console.log($currentScheduleIndex)
     
-    let courses = unfliteredCourses.sort(compare)
+    let courses = unfliteredCourses
     function download(uri: any, filename: string){
             var link = document.createElement('a');
 
@@ -49,7 +42,7 @@
         const calendar = document.getElementById('table')
         if (calendar) {
             html2canvas(calendar).then(canvas => {
-                console.log(calendar)
+                // console.log(calendar)
                 download(canvas.toDataURL(), 'timetable.png')
                 isSsDownloading = false
             });
@@ -62,6 +55,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
     <title>Pre-Registration Helper</title>
 </svelte:head>
@@ -88,46 +82,25 @@
 <div class="window">
     <div class="wrapper">
         <div style="padding: 5%;">
-            <div style="display: flex;justify-content:space-between">
-                <button class="alert-button" on:click={() => {isAlertsShown = !isAlertsShown}}>
-                    <TriangleExclamationSolid size='16' color="#000"/>
-                    <div style="width: 10px;"></div>
-                    {#if isAlertsShown}
-                        <AngleUpSolid size='16' />
-                    {:else}
-                        <AngleDownSolid size='16' />
-                    {/if}
-                </button>
-                <!-- <button on:click={() => {
-                        const amsWindow = window.open('https://www.google.com', 'amsWindow');
-                        if (amsWindow) {
-                            console.log('window opened')
-                            setTimeout(() => {console.log(amsWindow.document.getElementsByTagName('button'))}, 500)
-                            console.log('window loaded')
-                        }
-                    }
-                }>Fetch timetable from AMS</button> -->
-            </div>
-            <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>Please note that DSes do not show their correct timings. You can see their timings in their respective cards, to help you plan your semester better. Some courses may not display correctly (apologies), and some courses may be missing, which is being worked on.</p>
-            <p class="alert-text" style:display={isAlertsShown ? 'block' : 'none'}>PLEASE WATCH OUT FOR COURSES THAT TAKE UP TWO SLOTS. Again, due to processing limitations, only the starting slot of the course will be visible. For example, if a course is from 8:30 to 10:00 and 10:10 to 11:40, only the 8:30 to 10:10 slot will show up here. Please keep that in mind.</p>
+            <p>Preview multiple timetables ➡️<br><br>If the course checkbox is clicked even if the course is not part of that particular timetable, check and uncheck "Show only selected courses", it should fix it.</p>
             <h2 id="heading">Search for courses by course code/title</h2>
             <input type="text" bind:value={searchString} id="search-bar" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            Filter Out DSes?
-            <input type="checkbox" bind:checked={filterOutDS} id="">
+            <!-- Filter Out DSes? -->
+            <!-- <input type="checkbox" bind:checked={filterOutDS} id=""> -->
             <br>
             Show only selected courses? 
             <input type="checkbox" bind:checked={showSelected} id="">
-            ({$scheduleList.length} course{$scheduleList.length != 1 ? 's' : ''} selected)
+            ({$scheduleList[$currentScheduleIndex].length} course{$scheduleList[$currentScheduleIndex].length != 1 ? 's' : ''} selected)
         </div>
         <div class="container">
         {#if showSelected}
-            {#each $scheduleList as selectedCourse}
+            {#each $scheduleList[$currentScheduleIndex] as selectedCourse}
                 {#if filterOutDS}
-                    {#if (selectedCourse.code.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.title?.toLowerCase().includes(searchString.toLowerCase())) && selectedCourse.code[0].split('-').length !== 4}
+                    {#if (selectedCourse.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.CourseTitle?.toLowerCase().includes(searchString.toLowerCase())) && selectedCourse.LSCode[0].split('-').length !== 4}
                         <CourseCard course={selectedCourse} />
                     {/if}
                     {:else}
-                    {#if (selectedCourse.code.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.title?.toLowerCase().includes(searchString.toLowerCase()))}
+                    {#if (selectedCourse.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.CourseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
                         <CourseCard course={selectedCourse} /> 
                     {/if}
                 {/if}
@@ -135,11 +108,11 @@
             {:else}
                 {#each courses as course}
                     {#if filterOutDS}
-                        {#if (course.code.toString().toLowerCase().includes(searchString.toLowerCase()) || course.title?.toLowerCase().includes(searchString.toLowerCase())) && course.code[0].split('-').length !== 4}
+                        {#if (course.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || course.CourseTitle.toLowerCase().includes(searchString.toLowerCase())) && course.LSCode}
                             <CourseCard course={course} />
                         {/if}
                         {:else}
-                        {#if (course.code.toString().toLowerCase().includes(searchString.toLowerCase()) || course.title?.toLowerCase().includes(searchString.toLowerCase()))}
+                        {#if (course.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || course.CourseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
                         <CourseCard course={course} /> 
                         {/if}
                     {/if}
@@ -148,15 +121,25 @@
         </div>
     </div>
     <div id="calendar" style="display:{isCalendarShown ? 'flex' : 'none'};">
-        <button id="download-button" style="border:none;" on:click={() => saveAsImage()}>
-            {#if !isSsDownloading}
+        <div class="calendar-bar">
+            {#each [0,1,2,3,4] as timetableIndex}
+                <div
+                    on:click={() => {$currentScheduleIndex = timetableIndex}} 
+                    on:keypress={() => {$currentScheduleIndex = timetableIndex}}
+                    style={`background-color: ${$currentScheduleIndex == timetableIndex ? 'red' : 'white'}; border-radius: 5px; padding: 0 1vw; cursor: pointer`}>
+                    <p style="text-align: center; font-size:1vw">Timetable {timetableIndex + 1}</p>
+                </div>
+            {/each }
+            <button id="download-button" style="border:none;" on:click={() => saveAsImage()}>
+                {#if !isSsDownloading}
                 <DownloadSolid size='16' />     
                 {:else}
                 <ClockRegular size='16' />
-            {/if}
-            <div style="width: 10px;"></div>
-            {!isSsDownloading ? 'Download timetable snapshot' : 'Downloading...'}
-        </button>
+                {/if}
+                <div style="width: 10px;"></div>
+                {!isSsDownloading ? 'Download timetable snapshot' : 'Downloading...'}
+            </button>
+        </div>
         <CalendarView/>
     </div>
 
@@ -198,12 +181,12 @@
         margin: 0;
     }
 
-    .alert-text {
+    /* .alert-text {
         font-size: 0.85em; 
         text-align:justify;
         font-weight:500;
         color:#ccc
-    }
+    } */
 
     .modal {
         position: absolute;
@@ -223,7 +206,7 @@
         padding: 5vh 10vw;
     }
 
-    .alert-button {
+    /* .alert-button {
         background-color: #f4af03;
         border: none;
         padding: 5px 20px;
@@ -231,7 +214,7 @@
         display: flex;
         justify-content: space-evenly;
         align-items: center;
-    }
+    } */
 
     .wrapper {
         max-width: 40vw;
@@ -250,6 +233,15 @@
         display: flex;
         align-items: center;
         justify-content: space-evenly;
+    }
+
+    .calendar-bar {
+        display: flex; 
+        flex-direction: row; 
+        justify-content: space-evenly; 
+        width: 60vw; 
+        height: 5vh; 
+        /* background-color: red */
     }
 
     .container {
@@ -277,8 +269,8 @@
         display: flex;
         align-items: center;
         padding: 5px 10px;
-        font-family: 'Inconsolata';
-        font-weight: 900;
+        font-family: 'Verdana';
+        /* font-weight: 900; */
     }
 
     @media (max-width: 450px) {
@@ -299,6 +291,10 @@
             border: none;
             padding: 15px;
             border-radius: 100%;
+        }
+
+        .calendar-bar {
+            width: 100vw;
         }
     }
 </style>    
