@@ -4,7 +4,7 @@
     function getTime(course: CourseObject, day: string, timing: string) {
         const timeString = timing
         const start = timeString.split('–')[0]
-        // console.log(start, timeString)
+        console.log(start, timeString)
         const end = timeString.split('–')[1]
         if (timeString) {
             const baseAmount = 16.85
@@ -36,19 +36,22 @@
         </div>
         {#each $scheduleList[$currentScheduleIndex] as course}
             {#each course.WeekDays.split(', ') as courseDay}
-                {#if day == courseDay}
+                {#if day == courseDay && course.WeekDays.split(', ').length == 1}
                     {#each course.TimeSlot.split(', ') as timing}
                     <div class="table-course" style="top: {getTime(course, day, timing)};">
                          <p>{course.LSCode}</p>
                          <p>{course.SpaceName}</p>
                     </div>
                     {/each}
-                   <!-- {#if $showTooltip}
-                        <p>{course.LSCode}</p>
-                   {/if} -->
-                    {/if}
+                {/if}
+                {#if day == courseDay && course.WeekDays.split(', ').length > 1}
+                    <div class="table-course" style="top: {getTime(course, day, course.TimeSlot.split(', ')[course.WeekDays.split(', ').indexOf(courseDay)])};">
+                         <p>{course.LSCode}</p>
+                         <p>{course.SpaceName}</p>
+                    </div>
+                {/if}
             {/each}
-            {/each}
+        {/each}
         {#each Array.from(Array(14)) as _, i}
             <div class="cell">
                 <div class="line" style="background-color: black;"></div>
