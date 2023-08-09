@@ -3,10 +3,11 @@
 
     function getTime(course: CourseObject, day: string, timing: string) {
         const timeString = timing
-        const start = timeString.split('–')[0]
-        console.log(start, timeString)
-        const end = timeString.split('–')[1]
+        console.log(timing)
         if (timeString) {
+            const start = timeString.split('–')[0]
+            console.log(start)
+            // const end = timeString.split('–')[1]
             const baseAmount = 16.85
             const hoursOffset = (parseInt(start.split(':')[0]) - 8) * 6
             const minutesOffset = parseInt(start.split(':')[1]) / 10
@@ -36,19 +37,33 @@
         </div>
         {#each $scheduleList[$currentScheduleIndex] as course}
             {#each course.WeekDays.split(', ') as courseDay}
-                {#if day == courseDay && course.WeekDays.split(', ').length == 1}
+                {#if day == courseDay && course.TimeSlot.split(', ').length == 1}
                     {#each course.TimeSlot.split(', ') as timing}
                     <div class="table-course" style="top: {getTime(course, day, timing)};">
-                         <p>{course.LSCode}</p>
+                         <p>{course.LSCode.split('/ ')[0]}</p>
                          <p>{course.SpaceName}</p>
                     </div>
                     {/each}
                 {/if}
-                {#if day == courseDay && course.WeekDays.split(', ').length > 1}
-                    <div class="table-course" style="top: {getTime(course, day, course.TimeSlot.split(', ')[course.WeekDays.split(', ').indexOf(courseDay)])};">
-                         <p>{course.LSCode}</p>
+                {#if day == courseDay && course.TimeSlot.split(', ').length > 1 && course.WeekDays.split(', ').length > 1}
+                    <div class="table-course" style="top: {
+                        getTime(
+                            course, 
+                            day, 
+                            course.TimeSlot.split(', ')[course.WeekDays.split(', ').indexOf(courseDay)]
+                    )};">
+                         <p>{course.LSCode.split('/ ')[0]}</p>
+                         <p>{course.SpaceName}</p>
+                         <!-- <p>{course.WeekDays.split(', ').toString()}</p> -->
+                    </div>
+                {/if}
+                {#if day == courseDay && course.TimeSlot.split(', ').length > 1 && course.WeekDays.split(', ').length == 1}
+                    {#each course.TimeSlot.split(', ') as timing}
+                    <div class="table-course" style="top: {getTime(course, day, timing)};">
+                         <p>{course.LSCode.split('/ ')[0]}</p>
                          <p>{course.SpaceName}</p>
                     </div>
+                    {/each}
                 {/if}
             {/each}
         {/each}
