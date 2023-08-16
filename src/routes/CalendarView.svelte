@@ -45,6 +45,7 @@
                     </div>
                     {/each}
                 {/if}
+                <!-- {:else} -->
                 {#if day == courseDay && course.TimeSlot.split(', ').length > 1 && course.WeekDays.split(', ').length > 1}
                     <div class="table-course" style="top: {
                         getTime(
@@ -57,6 +58,7 @@
                          <!-- <p>{course.WeekDays.split(', ').toString()}</p> -->
                     </div>
                 {/if}
+                <!-- {:else} -->
                 {#if day == courseDay && course.TimeSlot.split(', ').length > 1 && course.WeekDays.split(', ').length == 1}
                     {#each course.TimeSlot.split(', ') as timing}
                     <div class="table-course" style="top: {getTime(course, day, timing)};">

@@ -90,10 +90,10 @@
 </div>
 <div class="window">
     <div class="wrapper">
-        <div style="padding: 5%;">
-            <p style={"background-color: #f4af03; padding: 10px; border-radius: 5px; font-weight: 400; font-family: Azeret Mono; font-size: 0.8rem"}>Preview multiple timetables ➡️<br><br>If the course checkbox is checked even if the course is not part of that particular timetable, check and uncheck "Show only selected courses", it should fix it.</p>
+        <div style="padding: 5%; font-family: Rubik">
+            <p style={"background-color: #f4af03; padding: 10px; border-radius: 5px; font-weight: 500; font-size: 0.8rem"}>Preview multiple timetables ➡️<br><br>If the course checkbox is checked even if the course is not part of that particular timetable, check and uncheck "Show only selected courses", it should fix it.</p>
             <h2 id="heading">Search for courses by course code/title</h2>
-            <input type="text" bind:value={searchString} id="search-bar" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" bind:value={searchString} id="search-bar" />
             <!-- Filter Out DSes? -->
             <!-- <input type="checkbox" bind:checked={filterOutDS} id=""> -->
             <br>
