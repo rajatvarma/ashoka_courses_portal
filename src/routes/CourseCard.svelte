@@ -6,26 +6,40 @@
     export let course:CourseObject
 
     
-    let isChecked = $scheduleList[$currentScheduleIndex].some((item:CourseObject) => (course.LSCode == item.LSCode))
+    let isChecked = $scheduleList[$currentScheduleIndex].some((item:CourseObject) => (course.courseCode == item.courseCode))
     // console.log(course.LSCode, $currentScheduleIndex, isChecked)
     let isDescriptionShown = false;
 
     function addToSchedule() {
         isChecked = !isChecked
-        let isClashingCourse = $scheduleList[$currentScheduleIndex].find((item:CourseObject) => {
-            const isWeekDaySame = course.WeekDays.split(',').some(day => (item.WeekDays.includes(day)))
-            const isTimingSame = course.TimeSlot.split(',').some(timing => (item.TimeSlot.includes(timing)))
-            return isTimingSame && isWeekDaySame && (course.LSCode != item.LSCode)
-        })
-        if (isClashingCourse) {
-            alert(`This course clashes with ${isClashingCourse.CourseTitle}.`)
-            isChecked = false
+        let clashingCourse = $scheduleList[$currentScheduleIndex].find((item:CourseObject) => {
+            if (item.courseCode == course.courseCode) return false;
             
+            const isSameDay = course.timings.map(t => t.day).some(d => item.timings.map(t => t.day).includes(d))
+            
+            if (!isSameDay) return false;
+
+            return course.timings.some(t1 => {
+                return item.timings.some(t2 => {
+                    const a1 = parseInt(t1.start.replace(":", ""))
+                    const a2 = parseInt(t1.end.replace(":", ""))
+                    const b1 = parseInt(t2.start.replace(":", ""))
+                    const b2 = parseInt(t2.end.replace(":", ""))
+
+                    return (Math.max(a1, b1) <= Math.min(a2, b2))
+                });
+            });
+        });
+
+        if (clashingCourse) {
+            alert(`This course clashes with ${clashingCourse.courseTitle}.`)
+            isChecked = false
         }
+        
         if (isChecked) {
             $scheduleList[$currentScheduleIndex] = [...$scheduleList[$currentScheduleIndex], course]
         } else {
-            $scheduleList[$currentScheduleIndex] = $scheduleList[$currentScheduleIndex].filter((item:CourseObject) => (course.LSCode != item.LSCode))
+            $scheduleList[$currentScheduleIndex] = $scheduleList[$currentScheduleIndex].filter((item:CourseObject) => (course.courseCode != item.courseCode))
         }
     }
 
@@ -33,34 +47,38 @@
 
 <div class="course-card">
     <div class="course-faculty">
-        {#each course.LSCode.split('/ ') as code}
+        {#each course.courseCode.split('/ ') as code}
             <span class="course-code">
                 {code}
             </span>
         {/each}
     </div>
     <span class="course-title">
-        {course.CourseTitle}
+        {course.courseTitle}
     </span>
     <div class="course-faculty">
     Faculty: 
     <br>
-    {#each course.Faculty.split(',') as faculty}
+    {#each course.faculty.split(',') as faculty}
         <span class="faculty">{faculty}</span><br>
     {/each}
     </div>
     <span class="course-timings">
         <!-- <h3>Timings</h3> -->
         <ClockSolid size="16" color="#1b1b1b" />
-        <div class="timings-text">
-            <p>{course.TimeSlot}</p>
-            <p>{course.WeekDays}</p>
-        </div>
+        <!-- TODO: can collapse shared timings into the same html element -->
+        {#each course.timings as timing}
+            <div class="timings-text">
+                <p>{timing.start}-{timing.end}</p>
+                <p>{days[timing.day]}</p>
+            </div>
+        {/each}
     </span>
     <span class="course-timings">
         <LocationDotSolid size="16" color="#1b1b1b" />
         <div class="timings-text">
-            {course.SpaceName}
+            <!-- join unique rooms for this course -->
+            {Array.from(new Set(course.timings.map(timing => timing.room))).join('/')}
         </div>
     </span>
     <div style="display: flex; align-items: center">

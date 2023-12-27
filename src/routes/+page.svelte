@@ -1,10 +1,10 @@
 <script lang="ts">
-    import unfliteredCourses from '../courses.json'
+    import unfilteredCourses from '../courses_s24.json'
     import CourseCard from './CourseCard.svelte'
     import { AngleDownSolid, AngleUpSolid, CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
     import html2canvas from 'html2canvas';
     import CalendarView from './CalendarView.svelte';
-    import { scheduleList, type CourseObject, currentScheduleIndex } from './things';
+    import { scheduleList, type CourseObject, currentScheduleIndex, days } from './things';
 	import { each } from 'svelte/internal';
     
     let filterOutDS = true;
@@ -20,7 +20,34 @@
 
     console.log($currentScheduleIndex)
     
-    let courses = unfliteredCourses
+    const courses = unfilteredCourses.map<CourseObject>(course => {
+        console.log(`Course ${course.courseCode} class details len: ${course.classDetails.length}`);
+        const classes = course.classDetails[0].split(' ) ');
+        console.log(`${classes.length} =?= ${course.classCounts}: ${classes.length == course.classCounts}`);
+        
+        const timings: CourseObject["timings"] = [];
+
+        for (let i = 0; i < classes.length; i++) {
+            if (classes[i].trim() == '') continue;
+            const [datetime, loc] = classes[i].split('(').map(str => str.trim());
+
+            const [dayName, start, end] = datetime.split('-').map(str => str.trim());
+            const day = days.indexOf(dayName);
+            const room = loc.endsWith(')') ? loc.slice(0, -1).trim() : loc.trim();
+            
+            timings.push({
+                day,
+                start,
+                end,
+                room
+            });
+        }
+
+        return {
+            ...course,
+            timings
+        }
+    });
     function download(uri: any, filename: string){
             var link = document.createElement('a');
 
@@ -33,7 +60,6 @@
 
             } else {
                 window.open(uri);
-
             }
         }
 
@@ -104,28 +130,16 @@
         <div class="container">
         {#if showSelected}
             {#each $scheduleList[$currentScheduleIndex] as selectedCourse}
-                {#if filterOutDS}
-                    {#if (selectedCourse.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.CourseTitle?.toLowerCase().includes(searchString.toLowerCase())) && selectedCourse.LSCode[0].split('-').length !== 4}
-                        <CourseCard course={selectedCourse} />
-                    {/if}
-                    {:else}
-                    {#if (selectedCourse.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.CourseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
-                        <CourseCard course={selectedCourse} /> 
-                    {/if}
+                {#if (selectedCourse.courseCode.toLowerCase().includes(searchString.toLowerCase()) || selectedCourse.courseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
+                    <CourseCard course={selectedCourse} /> 
                 {/if}
             {/each}
-            {:else}
-                {#each courses as course}
-                    {#if filterOutDS}
-                        {#if (course.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || course.CourseTitle.toLowerCase().includes(searchString.toLowerCase())) && course.LSCode}
-                            <CourseCard course={course} />
-                        {/if}
-                        {:else}
-                        {#if (course.LSCode.toString().toLowerCase().includes(searchString.toLowerCase()) || course.CourseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
-                        <CourseCard course={course} /> 
-                        {/if}
-                    {/if}
-                {/each}
+        {:else}
+            {#each courses as course}
+                {#if (course.courseCode.toLowerCase().includes(searchString.toLowerCase()) || course.courseTitle?.toLowerCase().includes(searchString.toLowerCase()))}
+                    <CourseCard course={course} /> 
+                {/if}
+            {/each}
         {/if}
         </div>
     </div>
