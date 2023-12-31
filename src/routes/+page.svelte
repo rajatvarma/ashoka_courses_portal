@@ -97,23 +97,6 @@
 <svelte:window bind:innerHeight={innerHeight} bind:innerWidth={innerWidth} />
 
 
-<div class="modal">
-    <div class="modal-box">
-        Experimental: This is a cool little feature that fetches your time-table from AMS and puts it in here so that you can download it as a neat little image.
-        This feature serves no purpose other than to display technical prowess hehehehehe. You will have to follow some tricky steps, but it should not be very difficult.
-        <ol>
-            <li>Open a new tab in your browser.</li>
-            <li>Press Ctrl+Shift+I</li>
-            <li>Now open AMS in the same tab, and make sure you're logged in.</li>
-            <li>Now, in the developer tools thing that shows up on the side, go to the "Network" tab, and set the filter to "Fetch/XHR"</li>
-            <li>Click on any entry called "GetListData", and scroll down to Request Headers</li>
-            <li>Right click on "Cookie", and click on copy value</li>
-            <li>Paste in that value below, and click on submit</li>
-        </ol>
-        Enter the cookie value: <input type="text" name="cookie" id="amsCookieInput" bind:value={cookieValue}>
-        <button>Submit</button>
-    </div>
-</div>
 <div class="window">
     <div class="wrapper">
         <div style="padding: 5%; font-family: Rubik">
@@ -124,7 +107,7 @@
             <!-- <input type="checkbox" bind:checked={filterOutDS} id=""> -->
             <br>
             Show only selected courses? 
-            <input type="checkbox" bind:checked={showSelected} id="">
+            <input type="checkbox" on:click={() => searchString = ''} bind:checked={showSelected} id="">
             ({$scheduleList[$currentScheduleIndex].length} course{$scheduleList[$currentScheduleIndex].length != 1 ? 's' : ''} selected)
         </div>
         <div class="container">
@@ -147,10 +130,11 @@
         <div class="calendar-bar">
             {#each [0,1,2,3,4] as timetableIndex}
                 <div
+                    class="timetable-button"
                     on:click={() => {$currentScheduleIndex = timetableIndex}} 
                     on:keypress={() => {$currentScheduleIndex = timetableIndex}}
-                    style={`background-color: ${$currentScheduleIndex == timetableIndex ? 'red' : 'white'}; border-radius: 5px; padding: 0 1vw; cursor: pointer`}>
-                    <p style="text-align: center; font-size:1vw">Timetable {timetableIndex + 1}</p>
+                    style={`background-color: ${$currentScheduleIndex == timetableIndex ? 'red' : 'white'}`}>
+                    <p>{timetableIndex + 1}</p>
                 </div>
             {/each }
             <button id="download-button" style="border:none;" on:click={() => saveAsImage()}>
@@ -261,9 +245,10 @@
     .calendar-bar {
         display: flex; 
         flex-direction: row; 
-        justify-content: space-evenly; 
-        width: 60vw; 
+        justify-content: space-between; 
+        width: 50vw; 
         height: 5vh; 
+        padding: 0 5vw;
         /* background-color: red */
     }
 
@@ -278,7 +263,6 @@
     #search-bar {
         border: #1b1b1b 0.5px solid;
         padding: 1%;
-        margin-top: 5%;
         margin-bottom: 5%;
     }
 
@@ -292,8 +276,25 @@
         display: flex;
         align-items: center;
         padding: 5px 10px;
-        font-family: 'Verdana';
+        width: 15vw;
+    }
+
+    .timetable-button {
+        background-color: #ccc;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        width: 5vw;
+        justify-content: center;
         /* font-weight: 900; */
+    }
+
+    .timetable-button p {
+        font-size: 1rem;
+        font-weight: 900;
+        display: flex;
+        text-align: center;
     }
 
     @media (max-width: 450px) {
@@ -317,7 +318,8 @@
         }
 
         .calendar-bar {
-            width: 100vw;
+            max-width: 100vw;
+            overflow: hidden;
         }
     }
 </style>    
