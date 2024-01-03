@@ -2,6 +2,15 @@ import { writable } from "svelte/store";
 
 export const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+interface prerequisite {
+    "PrerequisiteType"?: string,
+    "OperatorUsed"?: string,
+    "ComplexityLevel"?: number | null,
+    "NoOfCourses"?: number | null,
+    "nOFm_Courses"?: number | null,
+    "RequiredCourses"?: string | null
+}
+
 export interface CourseObject {
     "courseTitle": string,
     "courseCode": string,
@@ -17,6 +26,7 @@ export interface CourseObject {
     }[],
     "semester": string,
     "year": number
+    "prerequisites": prerequisite[],
 }
 
 const list: CourseObject[][] = [[], [], [], [], []]

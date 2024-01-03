@@ -2,6 +2,7 @@
     import { ClockSolid, LocationDotSolid } from "svelte-awesome-icons";
     import { scheduleList, days, currentScheduleIndex } from "./things";
     import type { CourseObject } from "./things";
+	import { each } from "svelte/internal";
 
     export let course:CourseObject
 
@@ -88,6 +89,27 @@
     <button class="button" on:click={() => {isDescriptionShown = !isDescriptionShown}}>{isDescriptionShown ? 'Hide' : 'Show'} Description</button>
     <div style="display: {isDescriptionShown ? 'block' : 'none'}; height: 40vh; overflow-y: scroll">
     {@html course.description}
+    </div>
+    <div>
+        <b>Prerequisites:</b>
+        {#if course.prerequisites.length == 0}
+            <p>None</p>
+        {/if}
+        <div style="display: flex; flex-wrap: wrap; flex-direction: column;margin-top: 10px">
+            {#each course.prerequisites as prerequisite}
+                {#if prerequisite.PrerequisiteType == "MathRequired"}
+                    <p>Mathematics required in XI or XII</p>
+                {/if}
+                {#if prerequisite.PrerequisiteType == "RequiredCourses"}
+                    {#each prerequisite.RequiredCourses?.split(',') as reqdCourse}
+                        <p style="margin: 0">{reqdCourse}</p>
+                    {/each}
+                {/if}
+                {#if course.prerequisites.length > 1 && prerequisite == course.prerequisites[0]}
+                    <p style="text-align:center; font-weight: 700">{course.prerequisites[0].OperatorUsed}</p>
+                {/if}
+            {/each}
+        </div>
     </div>
 </div>
 

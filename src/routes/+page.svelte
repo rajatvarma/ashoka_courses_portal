@@ -195,24 +195,6 @@
         color:#ccc
     } */
 
-    .modal {
-        position: absolute;
-        height: 100vh;
-        width: 100vw;
-        background-color: #1b1b1b55;
-        display: flex;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 10;
-    }
-
-    .modal-box {
-        background-color: #ccc;
-        width: 50vw;
-        padding: 5vh 10vw;
-    }
-
     /* .alert-button {
         background-color: #f4af03;
         border: none;
