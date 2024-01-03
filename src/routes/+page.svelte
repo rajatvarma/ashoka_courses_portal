@@ -1,29 +1,24 @@
 <script lang="ts">
     import unfilteredCourses from '../courses_s24.json'
     import CourseCard from './CourseCard.svelte'
-    import { AngleDownSolid, AngleUpSolid, CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
+    import { CalendarDaySolid, ClockRegular, DownloadSolid, ListSolid, TriangleExclamationSolid } from "svelte-awesome-icons";
     import html2canvas from 'html2canvas';
     import CalendarView from './CalendarView.svelte';
     import { scheduleList, type CourseObject, currentScheduleIndex, days } from './things';
-	import { each } from 'svelte/internal';
     
-    let filterOutDS = true;
     let showSelected = false;
     let searchString = '';
     let isSsDownloading = false;
     let innerHeight = 0
     let innerWidth = 0
     let isCalendarShown = true
-    let isAlertsShown = true
-    let isModalShown = false
-    let cookieValue = ''
 
-    console.log($currentScheduleIndex)
+    // console.log($currentScheduleIndex)
     
     const courses = unfilteredCourses.map<CourseObject>(course => {
-        console.log(`Course ${course.courseCode} class details len: ${course.classDetails.length}`);
+        // console.log(`Course ${course.courseCode} class details len: ${course.classDetails.length}`);
         const classes = course.classDetails[0].split(' ) ');
-        console.log(`${classes.length} =?= ${course.classCounts}: ${classes.length == course.classCounts}`);
+        // console.log(`${classes.length} =?= ${course.classCounts}: ${classes.length == course.classCounts}`);
         
         const timings: CourseObject["timings"] = [];
 

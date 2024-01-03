@@ -16,23 +16,28 @@
         let clashingCourse = $scheduleList[$currentScheduleIndex].find((item:CourseObject) => {
             if (item.courseCode == course.courseCode) return false;
             
-            const isSameDay = course.timings.map(t => t.day).some(d => item.timings.map(t => t.day).includes(d))
-            
-            if (!isSameDay) return false;
-
-            return course.timings.some(t1 => {
-                return item.timings.some(t2 => {
-                    const a1 = parseInt(t1.start.replace(":", ""))
-                    const a2 = parseInt(t1.end.replace(":", ""))
-                    const b1 = parseInt(t2.start.replace(":", ""))
-                    const b2 = parseInt(t2.end.replace(":", ""))
-
-                    return (Math.max(a1, b1) <= Math.min(a2, b2))
-                });
-            });
+            return course.timings.some((thisCourseTiming) => {
+                return item.timings.some((otherCourseTiming) => {
+                    if (thisCourseTiming.day == otherCourseTiming.day) {
+                        console.log(thisCourseTiming, otherCourseTiming)
+                        let thisCourseStart = new Date(`1/1/2000 ${thisCourseTiming.start}`)
+                        let thisCourseEnd = new Date(`1/1/2000 ${thisCourseTiming.end}`)
+                        let otherCourseStart = new Date(`1/1/2000 ${otherCourseTiming.start}`)
+                        let otherCourseEnd = new Date(`1/1/2000 ${otherCourseTiming.end}`)
+                        // console.log(thisCourseStart, thisCourseEnd, otherCourseStart, otherCourseEnd)
+                        if (thisCourseStart >= otherCourseStart && thisCourseStart <= otherCourseEnd) {
+                            return true
+                        }
+                    }
+                    return false
+                })
+            })
+           
         });
 
         if (clashingCourse) {
+            // console.log(clashingCourse)
+            // console.log(course)
             alert(`This course clashes with ${clashingCourse.courseTitle}.`)
             isChecked = false
         }
